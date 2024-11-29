@@ -16,25 +16,36 @@ export const checkAuth = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    if (req.path === '/signup' || req.path === '/login') {
+      return next();
+    }
 
+    const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
-      throw new HttpError('Authentication failed! Token missing.', 401);
+      return next(
+        new HttpError('Authentication failed: Token is missing.', 401)
+      );
+    }
+
+    if (!process.env.JWT_SECRET) {
+      throw new HttpError('Server error: Missing JWT secret.', 500);
     }
 
     const decodedToken = jwt.verify(
       token,
-      process.env.JWT_SECRET!
+      process.env.JWT_SECRET
     ) as JwtPayload;
-    const user = await Technician.findById(decodedToken.userId);
 
+    const user = await Technician.findById(decodedToken.userId).select(
+      'name contactInfo isAdmin'
+    );
     if (!user) {
-      throw new HttpError('User not found', 401);
+      return next(new HttpError('Authentication failed: User not found.', 401));
     }
 
-    req.user = user;
     next();
   } catch (error) {
+    console.error('Authentication error:', error);
     return next(new HttpError('Authentication failed!', 401));
   }
 };

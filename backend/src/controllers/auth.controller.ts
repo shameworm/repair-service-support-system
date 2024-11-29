@@ -77,8 +77,7 @@ export const login = async (
 
     const token = jwt.sign(
       { userId: existingUser.id, contactInfo: existingUser.contactInfo },
-      process.env.JWT_SECRET!,
-      { expiresIn: '1h' }
+      process.env.JWT_SECRET!
     );
 
     res.status(201).json({

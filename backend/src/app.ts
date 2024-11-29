@@ -26,10 +26,11 @@ if (!MONGODB_ACCESS_STR) {
 const app = express();
 
 app.use(bodyParser.json());
-app.use(checkAuth);
 
-app.use('/api', equipmentRouter);
 app.use('/api', authRouter);
+
+app.use(checkAuth);
+app.use('/api', equipmentRouter);
 app.use('/api', inventoryRouter);
 app.use('/api', maintanceRouter);
 app.use('/api', reportRouter);
