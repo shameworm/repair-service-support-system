@@ -24,5 +24,7 @@ const inventorySchema = new Schema<IInventory>({
   }
 });
 
-const Inventory = mongoose.model<IInventory>('Inventory', inventorySchema);
-export default Inventory;
+export const Inventory = mongoose.model<IInventory>(
+  'Inventory',
+  inventorySchema
+);
