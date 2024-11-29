@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+import { router as equipmentRouter } from './routes/equipment.routes';
+
 import { errorHandlingMiddleware } from './middleware/error-handler';
 import { notFoundMiddleware } from './middleware/not-found';
 
@@ -19,6 +21,8 @@ if (!MONGODB_ACCESS_STR) {
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use('/api', equipmentRouter);
 
 app.use(errorHandlingMiddleware);
 app.use(notFoundMiddleware);
