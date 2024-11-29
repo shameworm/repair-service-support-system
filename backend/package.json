@@ -1,0 +1,52 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "lint-staged": {
+    "*.{js,ts,cjs,mjs}": [
+      "eslint --fix",
+      "eslint",
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "format": "prettier --write ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-validator": "^7.2.0",
+    "mongoose": "^7.8.3",
+    "mongoose-unique-validator": "^4.0.1",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/mongoose": "^5.11.96",
+    "@types/mongoose-unique-validator": "^1.0.9",
+    "@types/node": "^22.10.1",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.47.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "lint-staged": "^15.2.10",
+    "nodemon": "^3.1.7",
+    "prettier": "^3.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
