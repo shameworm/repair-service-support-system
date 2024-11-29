@@ -10,7 +10,7 @@ interface JwtPayload {
   contactInfo: string;
 }
 
-export const authMiddleware = async (
+export const checkAuth = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
