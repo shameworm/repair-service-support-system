@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { router as equipmentRouter } from './routes/equipment.routes';
+import { router as authRouter } from './routes/auth.routes';
 
 import { errorHandlingMiddleware } from './middleware/error-handler';
 import { notFoundMiddleware } from './middleware/not-found';
@@ -23,6 +24,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use('/api', equipmentRouter);
+app.use('/api', authRouter);
 
 app.use(errorHandlingMiddleware);
 app.use(notFoundMiddleware);
