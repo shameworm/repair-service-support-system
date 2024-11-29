@@ -6,13 +6,10 @@ import {
   updateReport,
   deleteReport
 } from '../controllers/report.controller';
-import { checkAuth } from '../middleware/auth';
 
-const router = Router();
+export const router = Router();
 
-router.get('/report', checkAuth, getReports);
-router.post('/report', checkAuth, createReport);
-router.put('/report/:id', checkAuth, updateReport);
-router.delete('/report/:id', checkAuth, deleteReport);
-
-export default router;
+router.get('/report', getReports);
+router.post('/report', createReport);
+router.put('/report/:id', updateReport);
+router.delete('/report/:id', deleteReport);

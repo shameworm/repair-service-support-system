@@ -7,9 +7,13 @@ dotenv.config();
 
 import { router as equipmentRouter } from './routes/equipment.routes';
 import { router as authRouter } from './routes/auth.routes';
+import { router as inventoryRouter } from './routes/inventory.routes';
+import { router as maintanceRouter } from './routes/maintance.routes';
+import { router as reportRouter } from './routes/report.routes';
 
 import { errorHandlingMiddleware } from './middleware/error-handler';
 import { notFoundMiddleware } from './middleware/not-found';
+import { checkAuth } from './middleware/auth';
 
 const MONGODB_ACCESS_STR = process.env['MONGODB_URI'];
 const PORT = process.env.APPLICATION_PORT || 3000;
@@ -22,9 +26,13 @@ if (!MONGODB_ACCESS_STR) {
 const app = express();
 
 app.use(bodyParser.json());
+app.use(checkAuth);
 
 app.use('/api', equipmentRouter);
 app.use('/api', authRouter);
+app.use('/api', inventoryRouter);
+app.use('/api', maintanceRouter);
+app.use('/api', reportRouter);
 
 app.use(errorHandlingMiddleware);
 app.use(notFoundMiddleware);
