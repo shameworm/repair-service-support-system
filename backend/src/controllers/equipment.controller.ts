@@ -32,3 +32,109 @@ export const createEquipment = async (
     );
   }
 };
+
+export const getAllEquipments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const equipment = await Equipment.find();
+    res.status(200).json(equipment);
+  } catch (error) {
+    return next(new HttpError('Error fetching equipment', 500));
+  }
+};
+
+export const getEquipmentById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  try {
+    const equipmentId = req.params.id;
+    const equipment = await Equipment.findById(equipmentId);
+
+    if (!equipment) {
+      return next(new HttpError('Equipment not found', 404));
+    }
+
+    res.status(200).json(equipment);
+  } catch (error) {
+    return next(new HttpError('Error fetching equipment', 500));
+  }
+};
+
+export const updateEquipment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  try {
+    const equipmentId = req.params.id;
+    const { name, type, status, location } = req.body;
+
+    const updatedEquipment = await Equipment.findByIdAndUpdate(
+      equipmentId,
+      { name, type, status, location },
+      { runValidators: true }
+    );
+
+    if (!updateEquipment) {
+      return next(new HttpError('Equipment not found', 404));
+    }
+
+    res
+      .status(200)
+      .json({ message: 'Equipment updated successfully', updatedEquipment });
+  } catch (error) {
+    return next(new HttpError('', 500));
+  }
+};
+
+export const deleteEquipment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  try {
+    const equipmentId = req.params.id;
+
+    const deletedEquipment = await Equipment.findByIdAndDelete(equipmentId);
+
+    if (!deletedEquipment) {
+      return next(new HttpError('Equipment not found', 404));
+    }
+
+    res.status(200).json({
+      message: 'Equipment deleted succesfully',
+      deletedEquipment
+    });
+  } catch (error) {
+    return next(new HttpError('', 500));
+  }
+};

@@ -1,6 +1,12 @@
 import { Router } from 'express';
 
-import { createEquipment } from '../controllers/equipment.controller';
+import {
+  createEquipment,
+  getAllEquipments,
+  getEquipmentById,
+  updateEquipment,
+  deleteEquipment
+} from '../controllers/equipment.controller';
 
 import {
   equipmentIdValidation,
@@ -9,8 +15,13 @@ import {
 
 export const router = Router();
 
-router.get('/equipments');
-router.get('/equipments/:id', equipmentIdValidation);
+router.get('/equipments', getAllEquipments);
+router.get('/equipments/:id', equipmentIdValidation, getEquipmentById);
 router.post('/equipments', equipmentValidation, createEquipment);
-router.patch('/equipments/:id', equipmentIdValidation, equipmentValidation);
-router.delete('/equipments/:id', equipmentIdValidation);
+router.patch(
+  '/equipments/:id',
+  equipmentIdValidation,
+  equipmentValidation,
+  updateEquipment
+);
+router.delete('/equipments/:id', equipmentIdValidation, deleteEquipment);
