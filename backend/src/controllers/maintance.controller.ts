@@ -5,6 +5,24 @@ import { Maintenance } from '../models/maintance.schema';
 import { Equipment } from '../models/equipment.schema';
 import { Technician } from '../models/technician.schema';
 
+export const getMaintenance = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const query = req.user?.isAdmin ? {} : { technician: req.user?._id };
+    const reports = await Maintenance.find(query)
+      .populate('equipment')
+      .populate('technician');
+    res.json(reports);
+  } catch (error: any) {
+    return next(
+      new HttpError('Failed to fetch maintanance: ' + error.message, 500)
+    );
+  }
+};
+
 export const createMaintenance = async (
   req: AuthRequest,
   res: Response,
