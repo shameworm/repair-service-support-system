@@ -1,11 +1,18 @@
-import Layout from "./Layout";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RootLayout } from "~/shared/pages/Root";
+import { ErrorPage } from "~/shared/pages/Error";
 
 function App() {
-  return (
-    <Layout>
-      <h1>Hello</h1>
-    </Layout>
-  );
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <RootLayout />,
+      errorElement: <ErrorPage />,
+      children: [],
+    },
+  ]);
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;
