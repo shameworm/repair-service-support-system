@@ -43,6 +43,7 @@ export const checkAuth = async (
       return next(new HttpError('Authentication failed: User not found.', 401));
     }
 
+    req.user = user;
     next();
   } catch (error) {
     console.error('Authentication error:', error);

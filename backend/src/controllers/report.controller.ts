@@ -4,7 +4,7 @@ import { HttpError } from '../models/http-error';
 import { Report } from '../models/report.schema';
 import { Equipment } from '../models/equipment.schema';
 import { Technician } from '../models/technician.schema';
-import { generatePDF } from '../utils/generatePdf';
+import { generatePDF, deletePDF } from '../utils/reports.file.management';
 
 export const getReports = async (
   req: AuthRequest,
@@ -59,12 +59,11 @@ export const createReport = async (
 
     await newReport.save();
 
-    generatePDF(newReport, 'create');
-
     const populatedReport = await Report.populate(
       newReport,
-      'maintance equipment technician'
+      'maintenance equipment technician'
     );
+    await generatePDF(populatedReport, `report-${populatedReport._id}.pdf`);
 
     res.status(201).json(populatedReport);
   } catch (error: any) {
@@ -109,8 +108,7 @@ export const updateReport = async (
 
     await report.save();
 
-    generatePDF(report, 'create');
-
+    await generatePDF(report, `report-${report._id}.pdf`);
     const updatedReport = await Report.populate(
       report,
       'maintance equipment technician'
@@ -146,7 +144,7 @@ export const deleteReport = async (
 
     await report.deleteOne();
 
-    generatePDF(report, 'delete');
+    await deletePDF(`report-${report._id}.pdf`);
     res.status(200).json({ message: 'Report deleted successfully' });
   } catch (error: any) {
     return next(

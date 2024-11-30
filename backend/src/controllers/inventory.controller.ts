@@ -36,6 +36,9 @@ export const createInventory = async (
       return next(new HttpError('Equipment not found', 404));
     }
 
+    console.log('Request body:', req.body);
+    console.log('Authenticated user:', req.user);
+
     let finalTechnicianId = req.user?._id;
 
     if (req.user?.isAdmin && technicianId) {
@@ -55,7 +58,10 @@ export const createInventory = async (
 
     await newInventory.save();
 
-    const populatedInventory = await Inventory.populate(newInventory, 'equipment technician');
+    const populatedInventory = await Inventory.populate(
+      newInventory,
+      'equipment technician'
+    );
     res.status(201).json(populatedInventory);
   } catch (error: any) {
     return next(
@@ -100,7 +106,10 @@ export const updateInventory = async (
 
     await inventory.save();
 
-    const updatedInventory = await Inventory.populate(inventory, 'equipment technician');
+    const updatedInventory = await Inventory.populate(
+      inventory,
+      'equipment technician'
+    );
     res.json(updatedInventory);
   } catch (error: any) {
     return next(
