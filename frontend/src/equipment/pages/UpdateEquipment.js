@@ -137,7 +137,7 @@ const UpdateEquipment = () => {
             validators={[VALIDATOR_REQUIRE()]}
             errorText="Введіть коректні дані."
             onInput={inputHandler}
-            initialValue={loadedEquipment.title}
+            initialValue={loadedEquipment.name}
             initialValid={true}
           />
           <Input
@@ -148,7 +148,7 @@ const UpdateEquipment = () => {
             validators={[VALIDATOR_REQUIRE()]}
             errorText="Введіть коректні дані."
             onInput={inputHandler}
-            initialValue={loadedEquipment.title}
+            initialValue={loadedEquipment.type}
             initialValid={true}
           />
           <Input
@@ -159,7 +159,7 @@ const UpdateEquipment = () => {
             validators={[VALIDATOR_REQUIRE()]}
             errorText="Введіть коректні дані."
             onInput={inputHandler}
-            initialValue={loadedEquipment.title}
+            initialValue={loadedEquipment.status}
             initialValid={true}
           />
           <Input
@@ -169,7 +169,7 @@ const UpdateEquipment = () => {
             validators={[VALIDATOR_MINLENGTH(5)]}
             errorText="Введіть коректні дані."
             onInput={inputHandler}
-            initialValue={loadedEquipment.description}
+            initialValue={loadedEquipment.location}
             initialValid={true}
           />
           <Button type="submit" disabled={!formState.isValid}>
