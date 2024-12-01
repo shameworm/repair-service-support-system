@@ -83,9 +83,6 @@ export const createInventory = async (
       return next(new HttpError('Equipment not found', 404));
     }
 
-    console.log('Request body:', req.body);
-    console.log('Authenticated user:', req.user);
-
     let finalTechnicianId = req.user?._id;
 
     if (req.user?.isAdmin && technicianId) {

@@ -6,8 +6,6 @@ import {
   Switch
 } from 'react-router-dom';
 
-import Users from './user/pages/Users';
-import UserPlaces from './places/pages/UserPlaces';
 import Auth from './user/pages/Auth';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import { AuthContext } from './shared/context/auth-context';
@@ -19,6 +17,9 @@ import UpdateEquipment from './equipment/pages/UpdateEquipment';
 import Inventory from './inventory/pages/Inventory';
 import NewInventory from './inventory/pages/NewInventory';
 import UpdateInventory from './inventory/pages/UpdateInventory';
+import Maintance from './maintance/pages/Maintance';
+import NewMaintance from './maintance/pages/NewMaintance';
+import UpdateMaintance from './maintance/pages/UpdateMaintance';
 
 const App = () => {
   const { token, login, logout, userId } = useAuth();
@@ -49,18 +50,21 @@ const App = () => {
         <Route path="/inventory/:id">
           <UpdateInventory />
         </Route>
+        <Route path="/maintance" exact>
+          <Maintance />
+        </Route>
+        <Route path="/maintance/new" exact>
+          <NewMaintance />
+        </Route>
+        <Route path="/maintance/:id">
+          <UpdateMaintance />
+        </Route>
         <Redirect to="/" />
       </Switch>
     );
   } else {
     routes = (
       <Switch>
-        <Route path="/" exact>
-          <Users />
-        </Route>
-        <Route path="/:userId/places" exact>
-          <UserPlaces />
-        </Route>
         <Route path="/auth">
           <Auth />
         </Route>

@@ -23,6 +23,27 @@ export const getMaintenance = async (
   }
 };
 
+export const getMaintenanceById = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const query = req.user?.isAdmin
+      ? { _id: id }
+      : { _id: id, technician: req.user?._id };
+    const reports = await Maintenance.find(query)
+      .populate('equipment')
+      .populate('technician');
+    res.json(reports);
+  } catch (error: any) {
+    return next(
+      new HttpError('Failed to fetch maintanance: ' + error.message, 500)
+    );
+  }
+};
+
 export const createMaintenance = async (
   req: AuthRequest,
   res: Response,
