@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -15,9 +16,10 @@ import { router as reportRouter } from './routes/report.routes';
 import { errorHandlingMiddleware } from './middleware/error-handler';
 import { notFoundMiddleware } from './middleware/not-found';
 import { checkAuth } from './middleware/auth';
+import path from 'path';
 
 const MONGODB_ACCESS_STR = process.env['MONGODB_URI'];
-const PORT = process.env.APPLICATION_PORT || 3000;
+const PORT = 5000;
 
 if (!MONGODB_ACCESS_STR) {
   console.error('Error: MONGODB_ACCESS_STR is not defined.');

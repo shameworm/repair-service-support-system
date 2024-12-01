@@ -2,10 +2,18 @@ import fs from 'fs';
 import PDFDocument from 'pdfkit';
 import path from 'path';
 import { Report } from '../models/report.schema';
+import { AuthRequest } from '../types/custom';
+import { NextFunction, Response } from 'express';
+import { HttpError } from '../models/http-error';
 
-const REPORTS_DIR = path.resolve(__dirname, '../../files/reports');
+const REPORTS_DIR = path.resolve(__dirname, '../../public/files/reports');
 
 export const generatePDF = (reportData: any, filename: string) => {
+  // Переконайтесь, що файл має розширення .pdf
+  if (!filename.endsWith('.pdf')) {
+    filename += '.pdf';
+  }
+
   const filePath = path.join(REPORTS_DIR, filename);
   const formattedDate = new Intl.DateTimeFormat('uk-UA', {
     year: 'numeric',
@@ -16,8 +24,12 @@ export const generatePDF = (reportData: any, filename: string) => {
     second: '2-digit'
   }).format(new Date(reportData.date));
 
+  // Перевірка, чи не є файл директорією
   if (!fs.existsSync(filePath)) {
-    fs.mkdirSync(filePath, { recursive: true });
+    const dirPath = path.dirname(filePath);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
   }
 
   const doc = new PDFDocument({ margin: 50 });
@@ -36,10 +48,7 @@ export const generatePDF = (reportData: any, filename: string) => {
     .text(`Дата: ${formattedDate}`, { align: 'right' })
     .moveDown(1);
 
-  doc
-    .moveDown(2)
-    .fontSize(14)
-    .text(`${reportData.details}`, { align: 'center' });
+  doc.moveDown(2).fontSize(14).text(`${reportData.details}`, { align: 'left' });
 
   doc.moveDown(2);
 
@@ -50,7 +59,7 @@ export const generatePDF = (reportData: any, filename: string) => {
   ]);
 
   createTable(doc, 'Деталі Обслуговування', [
-    { field: 'Дата', value: reportData.maintenance?.data || 'N/A' },
+    { field: 'Дата', value: reportData.maintenance?.date || 'N/A' },
     { field: 'Тип', value: reportData.maintenance?.type || 'N/A' },
     { field: 'Статус', value: reportData.maintenance?.status || 'N/A' }
   ]);
@@ -106,9 +115,48 @@ export const deletePDF = async (filename: string) => {
   const filePath = path.join(REPORTS_DIR, filename);
 
   try {
-    await fs.promises.unlink(filePath);
+    fs.unlink(filePath, () => {});
     console.log(`PDF deleted: ${filePath}`);
   } catch (error: any) {
     console.error(`Failed to delete PDF: ${filePath} - ${error.message}`);
+  }
+};
+
+export const getPdfReport = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const report = await Report.findById(id);
+
+    if (!report) {
+      return next(new HttpError('Report not found', 404));
+    }
+
+    const filename = `report-${report._id}.pdf`;
+    const filePath = path.join(REPORTS_DIR, filename);
+
+    if (!fs.existsSync(filePath)) {
+      return next(new HttpError('PDF not found', 404));
+    }
+
+    const isDownload = req.query.download === 'true';
+
+    if (isDownload) {
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${filename}"`
+      );
+      res.setHeader('Content-Type', 'application/pdf');
+    } else {
+      res.setHeader('Content-Type', 'application/pdf');
+    }
+
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+  } catch (error: any) {
+    return next(new HttpError('Failed to fetch PDF: ' + error.message, 500));
   }
 };

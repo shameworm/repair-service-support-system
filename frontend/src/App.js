@@ -2,7 +2,6 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
-  Redirect,
   Switch
 } from 'react-router-dom';
 
@@ -20,6 +19,9 @@ import UpdateInventory from './inventory/pages/UpdateInventory';
 import Maintance from './maintance/pages/Maintance';
 import NewMaintance from './maintance/pages/NewMaintance';
 import UpdateMaintance from './maintance/pages/UpdateMaintance';
+import Report from './report/pages/Report';
+import NewReport from './report/pages/NewReport';
+import UpdateReport from './report/pages/UpdateReport';
 
 const App = () => {
   const { token, login, logout, userId } = useAuth();
@@ -59,7 +61,15 @@ const App = () => {
         <Route path="/maintance/:id">
           <UpdateMaintance />
         </Route>
-        <Redirect to="/" />
+        <Route path="/reports" exact>
+          <Report />
+        </Route>
+        <Route path="/reports/new" exact>
+          <NewReport />
+        </Route>
+        <Route path="/reports/:id">
+          <UpdateReport />
+        </Route>
       </Switch>
     );
   } else {
@@ -68,7 +78,6 @@ const App = () => {
         <Route path="/auth">
           <Auth />
         </Route>
-        <Redirect to="/auth" />
       </Switch>
     );
   }

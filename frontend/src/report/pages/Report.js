@@ -1,38 +1,61 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import InventoryTable from '../components/MaintanceTable';
+import ReportTable from '../components/ReportTable';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import { useHttpClient } from '../../shared/hooks/http-hook';
 
-const Inventory = () => {
-  const [loadedInventory, setLoadedInventory] = useState();
+const Report = () => {
+  const [loadedReport, setLoadedReport] = useState();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const token = useParams();
   useEffect(() => {
-    const fetchInventory = async () => {
+    const fetchReport = async () => {
       const userData = JSON.parse(localStorage.getItem('userData'));
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/inventory/`,
+          `http://localhost:5000/api/reports/`,
           "GET",
           null,
           { Authorization: `Bearer ${userData.token}` },
         )
         console.log(responseData)
-        setLoadedInventory(responseData);
+        setLoadedReport(responseData);
       } catch (err) { }
     };
-    fetchInventory();
+    fetchReport();
   }, [sendRequest, token]);
 
-  const inventoryDeletedHandler = async (deletedInvetoryId) => {
+  const handlePdfUpload = async (reportId) => {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    try {
+      const response = await sendRequest(
+        `http://localhost:5000/api/reports/${reportId}/pdf`,
+        'GET',
+        null,
+        {
+          Authorization: `Bearer ${userData.token}`,
+          FileName: `${reportId}.pdf`,
+          ContentType: "application/pdf",
+        },
+      );
+
+      console.log(response)
+
+    } catch (err) {
+      console.log('Error fetching PDF:', err);
+    }
+  };
+
+
+
+  const reportDeletedHandler = async (deletedInvetoryId) => {
     const userData = JSON.parse(localStorage.getItem('userData'));
     try {
       const responseData = await sendRequest(
-        `http://localhost:5000/api/inventory/${deletedInvetoryId}`,
+        `http://localhost:5000/api/reports/${deletedInvetoryId}`,
         'DELETE',
         null,
         {
@@ -40,9 +63,9 @@ const Inventory = () => {
           Authorization: `Bearer ${userData.token}`,
         }
       );
-      console.log('Inventory deleted:', responseData);
-      setLoadedInventory((prevInventory) =>
-        prevInventory.filter(inventory => inventory._id !== deletedInvetoryId)
+      console.log('Report deleted:', responseData);
+      setLoadedReport((prevReport) =>
+        prevReport.filter(report => report._id !== deletedInvetoryId)
       );
     } catch (err) {
       console.log('Error deleting equipment:', err);
@@ -57,11 +80,11 @@ const Inventory = () => {
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && loadedInventory && (
-        <InventoryTable items={loadedInventory} onInventoryDelete={inventoryDeletedHandler} />
+      {!isLoading && loadedReport && (
+        <ReportTable items={loadedReport} onReportDelete={reportDeletedHandler} handlePdfUpload={handlePdfUpload} />
       )}
     </React.Fragment>
   );
 };
 
-export default Inventory;
+export default Report;
