@@ -18,6 +18,7 @@ import NewEquipment from './equipment/pages/NewEquipment';
 import UpdateEquipment from './equipment/pages/UpdateEquipment';
 import Inventory from './inventory/pages/Inventory';
 import NewInventory from './inventory/pages/NewInventory';
+import UpdateInventory from './inventory/pages/UpdateInventory';
 
 const App = () => {
   const { token, login, logout, userId } = useAuth();
@@ -45,8 +46,8 @@ const App = () => {
         <Route path="/inventory/new" exact>
           <NewInventory />
         </Route>
-        <Route path="/equipments/:id">
-          {/* <UpdateEquipment /> */}
+        <Route path="/inventory/:id">
+          <UpdateInventory />
         </Route>
         <Redirect to="/" />
       </Switch>

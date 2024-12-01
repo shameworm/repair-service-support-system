@@ -23,6 +23,53 @@ export const getInventories = async (
   }
 };
 
+export const getInventoryById = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    console.log(req.params);
+    const { id } = req.params;
+
+    const query = req.user?.isAdmin
+      ? { _id: id }
+      : { _id: id, technician: req.user?._id };
+
+    const inventory = await Inventory.findOne(query)
+      .populate('equipment')
+      .populate('technician');
+
+    if (!inventory) {
+      return next(new HttpError('Inventory not found', 404));
+    }
+
+    res.json(inventory);
+  } catch (error: any) {
+    return next(
+      new HttpError('Failed to fetch inventory: ' + error.message, 500)
+    );
+  }
+};
+
+export const getInventoriesById = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const query = req.user?.isAdmin ? {} : { technician: req.user?._id };
+    const inventories = await Inventory.find(query)
+      .populate('equipment')
+      .populate('technician');
+    res.json(inventories);
+  } catch (error: any) {
+    return next(
+      new HttpError('Failed to fetch inventories: ' + error.message, 500)
+    );
+  }
+};
+
 export const createInventory = async (
   req: AuthRequest,
   res: Response,
