@@ -92,7 +92,7 @@ const Auth = () => {
             'Content-Type': 'application/json'
           }
         );
-        auth.login(responseData.userId._id, responseData.token, responseData.userId.isAdmin);
+        auth.login(responseData.userId._id, responseData.token, responseData.userId.isAdmin,);
       } catch (err) { }
     } else {
       try {

@@ -15,14 +15,15 @@ export const useAuth = () => {
     setUserId(uid);
     setIsAdmin(isAdmin);
     setTokenExpirationDate(tokenExpiry);
+    console.log(tokenExpiry)
 
     localStorage.setItem(
       'userData',
       JSON.stringify({
         userId: uid,
         token: token,
-        expiration: tokenExpiry.toISOString(),
         isAdmin: isAdmin,
+        expiration: tokenExpiry.toISOString(),
       })
     );
   }, []);
@@ -50,14 +51,14 @@ export const useAuth = () => {
     if (
       storedData &&
       storedData.token &&
-      new Date(storedData.expiration) > new Date() &&
-      storedData.isAdmin
+      storedData.isAdmin &&
+      new Date(storedData.expiration) > new Date()
     ) {
       login(
         storedData.userId,
         storedData.token,
+        storedData.isAdmin,
         new Date(storedData.expiration),
-        storedData.isAdmin
       );
     }
   }, [login]);
