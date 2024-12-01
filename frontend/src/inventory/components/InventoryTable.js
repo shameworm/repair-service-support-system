@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { format } from "date-fns"
 import {
   useReactTable,
   flexRender,
@@ -19,7 +20,10 @@ const InventoryTable = (props) => {
       {
         accessorKey: 'date',
         header: 'Дата',
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const date = new Date(info.getValue());
+          return format(date, 'dd.MM.yyyy');
+        },
       },
       {
         accessorKey: 'remarks',
