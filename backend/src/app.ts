@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { router as equipmentRouter } from './routes/equipment.routes';
+import { router as techniciansRouter } from './routes/technician.routes';
 import { router as authRouter } from './routes/auth.routes';
 import { router as inventoryRouter } from './routes/inventory.routes';
 import { router as maintanceRouter } from './routes/maintance.routes';
@@ -30,6 +31,7 @@ app.use(bodyParser.json());
 app.use('/api', authRouter);
 
 app.use(checkAuth);
+app.use('/api', techniciansRouter);
 app.use('/api', equipmentRouter);
 app.use('/api', inventoryRouter);
 app.use('/api', maintanceRouter);

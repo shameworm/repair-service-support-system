@@ -12,7 +12,7 @@ export const signup = async (
   next: NextFunction
 ) => {
   const errors = validationResult(req);
-
+  console.log(req.body);
   if (!errors.isEmpty()) {
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)

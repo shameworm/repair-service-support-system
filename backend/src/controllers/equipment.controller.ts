@@ -10,7 +10,7 @@ export const createEquipment = async (
   next: NextFunction
 ): Promise<void> => {
   const errors = validationResult(req);
-
+  console.log(errors);
   if (!errors.isEmpty()) {
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
@@ -19,6 +19,7 @@ export const createEquipment = async (
 
   try {
     const { name, type, status, location } = req.body;
+    console.log(name, type, status, location);
     const equipment = new Equipment({ name, type, status, location });
 
     await equipment.save();
