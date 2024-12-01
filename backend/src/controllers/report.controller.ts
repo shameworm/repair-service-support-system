@@ -25,6 +25,28 @@ export const getReports = async (
   }
 };
 
+export const getReportsById = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const query = req.user?.isAdmin
+      ? { _id: id }
+      : { _id: id, technician: req.user?._id };
+    const reports = await Report.find(query)
+      .populate('maintenance')
+      .populate('equipment')
+      .populate('technician');
+    res.json(reports);
+  } catch (error: any) {
+    return next(
+      new HttpError('Failed to fetch reports: ' + error.message, 500)
+    );
+  }
+};
+
 export const createReport = async (
   req: AuthRequest,
   res: Response,
