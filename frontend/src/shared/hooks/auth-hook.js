@@ -4,21 +4,25 @@ let logoutTimer;
 
 export const useAuth = () => {
   const [token, setToken] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [userId, setUserId] = useState(false);
 
-  const login = useCallback((uid, token, expirationDate) => {
+  const login = useCallback((uid, token, isAdmin, expirationDate) => {
+    const tokenExpiry =
+      expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60); // 1 hour
     setToken(token);
     setUserId(uid);
-    const tokenExpirationDate =
-      expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
-    setTokenExpirationDate(tokenExpirationDate);
+    setIsAdmin(isAdmin);
+    setTokenExpirationDate(tokenExpiry);
+
     localStorage.setItem(
       'userData',
       JSON.stringify({
         userId: uid,
         token: token,
-        expiration: tokenExpirationDate.toISOString()
+        expiration: tokenExpiry.toISOString(),
+        isAdmin: isAdmin,
       })
     );
   }, []);
@@ -27,12 +31,14 @@ export const useAuth = () => {
     setToken(null);
     setTokenExpirationDate(null);
     setUserId(null);
+    setIsAdmin(false);
     localStorage.removeItem('userData');
   }, []);
 
   useEffect(() => {
     if (token && tokenExpirationDate) {
-      const remainingTime = tokenExpirationDate.getTime() - new Date().getTime();
+      const remainingTime =
+        new Date(tokenExpirationDate).getTime() - new Date().getTime();
       logoutTimer = setTimeout(logout, remainingTime);
     } else {
       clearTimeout(logoutTimer);
@@ -44,11 +50,17 @@ export const useAuth = () => {
     if (
       storedData &&
       storedData.token &&
-      new Date(storedData.expiration) > new Date()
+      new Date(storedData.expiration) > new Date() &&
+      storedData.isAdmin
     ) {
-      login(storedData.userId, storedData.token, new Date(storedData.expiration));
+      login(
+        storedData.userId,
+        storedData.token,
+        new Date(storedData.expiration),
+        storedData.isAdmin
+      );
     }
   }, [login]);
 
-  return { token, login, logout, userId };
+  return { token, login, logout, userId, isAdmin };
 };

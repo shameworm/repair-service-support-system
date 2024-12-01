@@ -27,11 +27,12 @@ const Inventory = () => {
     };
     fetchInventory();
   }, [sendRequest, token]);
-  const equipmentDeletedHandler = async (deletedEquipmentId) => {
+
+  const inventoryDeletedHandler = async (deletedInvetoryId) => {
     const userData = JSON.parse(localStorage.getItem('userData'));
     try {
       const responseData = await sendRequest(
-        `http://localhost:5000/api/inventory/${deletedEquipmentId}`,
+        `http://localhost:5000/api/inventory/${deletedInvetoryId}`,
         'DELETE',
         null,
         {
@@ -39,9 +40,9 @@ const Inventory = () => {
           Authorization: `Bearer ${userData.token}`,
         }
       );
-      console.log('Equipment deleted:', responseData);
+      console.log('Inventory deleted:', responseData);
       setLoadedInventory((prevInventory) =>
-        prevInventory.filter(equipment => equipment._id !== deletedEquipmentId)
+        prevInventory.filter(inventory => inventory._id !== deletedInvetoryId)
       );
     } catch (err) {
       console.log('Error deleting equipment:', err);
@@ -57,7 +58,7 @@ const Inventory = () => {
         </div>
       )}
       {!isLoading && loadedInventory && (
-        <InventoryTable items={loadedInventory} onEquipmentDelete={equipmentDeletedHandler} />
+        <InventoryTable items={loadedInventory} onInventoryDelete={inventoryDeletedHandler} />
       )}
     </React.Fragment>
   );

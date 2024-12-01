@@ -92,8 +92,7 @@ const Auth = () => {
             'Content-Type': 'application/json'
           }
         );
-        console.log(responseData)
-        auth.login(responseData.userId._id, responseData.token);
+        auth.login(responseData.userId._id, responseData.token, responseData.userId.isAdmin);
       } catch (err) { }
     } else {
       try {
