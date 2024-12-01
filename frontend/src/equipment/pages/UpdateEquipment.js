@@ -21,7 +21,6 @@ const UpdateEquipment = () => {
   const [loadedEquipment, setLoadedEquipment] = useState();
   const equipmentId = useParams().id
   const history = useHistory();
-  console.log(equipmentId)
 
   const [formState, inputHandler, setFormData] = useForm(
     {

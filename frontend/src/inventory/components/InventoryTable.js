@@ -35,14 +35,14 @@ const InventoryTable = (props) => {
         id: 'technician.name',
         header: 'Технік',
         cell: (info) => {
-          return info.row.original.technician.name
+          return info.row.original.technician.name || "Н/з"
         },
       },
       {
         accessorKey: 'equipment.name',
         id: 'equipment.name',
         header: 'Обладнання',
-        cell: (info) => info.row.original.equipment.name,
+        cell: (info) => info.row.original.equipment?.name || "Н/з",
       },
       {
         accessorKey: 'actions',
@@ -58,7 +58,7 @@ const InventoryTable = (props) => {
                 <line x1="14" x2="14" y1="11" y2="17" />
               </svg>
             </Button>
-            <Button size='small' inverse to={`Inventorys/${info.row.original._id}`}>
+            <Button size='small' inverse to={`/inventory/${info.row.original._id}`}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-repeat-2">
                 <path d="m2 9 3-3 3 3" />
                 <path d="M13 18H7a2 2 0 0 1-2-2V6" />
@@ -76,7 +76,6 @@ const InventoryTable = (props) => {
 
   const tableData = useMemo(() => props.items || [], [props.items]);
   const pageCount = Math.ceil(tableData.length / pageSize);
-
   const table = useReactTable({
     data: tableData,
     columns,
@@ -102,6 +101,7 @@ const InventoryTable = (props) => {
     },
   });
 
+  console.log(table.getRowModel().rows.map((row) => row))
   const handleSort = (header) => {
     header.column.toggleSorting();
   };
