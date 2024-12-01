@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@tanstack/react-table": "^8.20.5",
+    "date-fns": "^4.1.0",
     "old": "^0.2.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
