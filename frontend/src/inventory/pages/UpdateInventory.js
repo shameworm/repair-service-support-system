@@ -17,7 +17,7 @@ const UpdateInventory = () => {
   const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedInventory, setLoadedInventory] = useState();
-  const inventoryId = useParams()._id;
+  const inventoryId = useParams().id;
   const history = useHistory();
 
   const [formState, inputHandler, setFormData] = useForm(
@@ -42,9 +42,7 @@ const UpdateInventory = () => {
     false
   );
 
-  const [loadedTechnicians, setLoadedTechnicians] = useState([]);
   const [loadedEquipments, setLoadedEquipments] = useState([]);
-  const [selectedTechnician, setSelectedTechnician] = useState(null);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
 
   // Fetch equipment and technician data
@@ -63,35 +61,12 @@ const UpdateInventory = () => {
     fetchEquipments();
   }, [sendRequest, auth.token]);
 
-  useEffect(() => {
-    const fetchTechnicians = async () => {
-      try {
-        const responseData = await sendRequest(
-          `http://localhost:5000/api/technicians`,
-          "GET",
-          null,
-          { Authorization: `Bearer ${auth.token}` }
-        );
-        setLoadedTechnicians(responseData);
-      } catch (err) { }
-    };
-    fetchTechnicians();
-  }, [sendRequest, auth.token]);
-
-  // Technician and equipment options for select dropdowns
-  const technicianOptions = loadedTechnicians.map((technician) => ({
-    value: technician._id,
-    label: technician.name,
-  }));
 
   const equipmentOptions = loadedEquipments.map((equipment) => ({
     value: equipment._id,
     label: equipment.name,
   }));
 
-  const handleTechnicianChange = (selectedOption) => {
-    setSelectedTechnician(selectedOption);
-  };
 
   const handleEquipmentChange = (selectedOption) => {
     setSelectedEquipment(selectedOption);
@@ -129,14 +104,12 @@ const UpdateInventory = () => {
           },
           true
         );
-        setSelectedTechnician({ value: responseData.technicianId, label: responseData.technicianName });
         setSelectedEquipment({ value: responseData.equipmentId, label: responseData.equipmentName });
       } catch (err) { }
     };
     fetchInventory();
   }, [sendRequest, inventoryId, auth.token, setFormData]);
 
-  // Submit updated inventory
   const inventoryUpdateSubmitHandler = async event => {
     event.preventDefault();
     try {
