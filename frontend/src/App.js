@@ -22,6 +22,7 @@ import UpdateMaintance from './maintance/pages/UpdateMaintance';
 import Report from './report/pages/Report';
 import NewReport from './report/pages/NewReport';
 import UpdateReport from './report/pages/UpdateReport';
+import Statistics from './statistics/pages/Statistics';
 
 const App = () => {
   const { token, login, logout, userId } = useAuth();
@@ -69,6 +70,9 @@ const App = () => {
         </Route>
         <Route path="/reports/:id">
           <UpdateReport />
+        </Route>
+        <Route path="/statistics" >
+          <Statistics />
         </Route>
       </Switch>
     );

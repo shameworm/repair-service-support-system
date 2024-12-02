@@ -14,7 +14,6 @@ export const router = Router();
 
 router.get('/reports', getReports);
 router.get('/reports/:id', getReportsById);
-router.get('/technicians/most-reports', getMostReports);
 router.get('/files/reports/:reportId/pdf', getReportByIdPdf);
 router.post('/reports', createReport);
 router.put('/reports/:id', updateReport);

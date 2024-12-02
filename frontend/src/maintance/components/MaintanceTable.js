@@ -126,7 +126,7 @@ const MaintanceTable = (props) => {
       <div className="place-list center">
         <Card>
           <h2>Не знайдено жодного запису про обслуговування</h2>
-          <Button to="/inventory/new">Додати запис</Button>
+          <Button to="/maintance/new">Додати запис</Button>
         </Card>
       </div>
     );
