@@ -6,7 +6,7 @@ import { AuthRequest } from '../types/custom';
 import { NextFunction, Response } from 'express';
 import { HttpError } from '../models/http-error';
 
-const REPORTS_DIR = path.resolve(__dirname, '../../public/files/reports');
+const REPORTS_DIR = path.resolve(__dirname, '../files/reports');
 
 export const generatePDF = (reportData: any, filename: string) => {
   // Переконайтесь, що файл має розширення .pdf
@@ -17,11 +17,8 @@ export const generatePDF = (reportData: any, filename: string) => {
   const filePath = path.join(REPORTS_DIR, filename);
   const formattedDate = new Intl.DateTimeFormat('uk-UA', {
     year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
+    month: 'numeric',
+    day: 'numeric'
   }).format(new Date(reportData.date));
 
   // Перевірка, чи не є файл директорією
@@ -119,44 +116,5 @@ export const deletePDF = async (filename: string) => {
     console.log(`PDF deleted: ${filePath}`);
   } catch (error: any) {
     console.error(`Failed to delete PDF: ${filePath} - ${error.message}`);
-  }
-};
-
-export const getPdfReport = async (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.params;
-    const report = await Report.findById(id);
-
-    if (!report) {
-      return next(new HttpError('Report not found', 404));
-    }
-
-    const filename = `report-${report._id}.pdf`;
-    const filePath = path.join(REPORTS_DIR, filename);
-
-    if (!fs.existsSync(filePath)) {
-      return next(new HttpError('PDF not found', 404));
-    }
-
-    const isDownload = req.query.download === 'true';
-
-    if (isDownload) {
-      res.setHeader(
-        'Content-Disposition',
-        `attachment; filename="${filename}"`
-      );
-      res.setHeader('Content-Type', 'application/pdf');
-    } else {
-      res.setHeader('Content-Type', 'application/pdf');
-    }
-
-    const fileStream = fs.createReadStream(filePath);
-    fileStream.pipe(res);
-  } catch (error: any) {
-    return next(new HttpError('Failed to fetch PDF: ' + error.message, 500));
   }
 };

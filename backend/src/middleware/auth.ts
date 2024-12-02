@@ -15,8 +15,9 @@ export const checkAuth = async (
   res: Response,
   next: NextFunction
 ) => {
+  const publicPaths = ['/signup', '/login', '/files/reports'];
   try {
-    if (req.path === '/signup' || req.path === '/login') {
+    if (publicPaths.some((path) => req.path.startsWith(path))) {
       return next();
     }
 

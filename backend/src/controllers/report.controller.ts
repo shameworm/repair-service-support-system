@@ -1,4 +1,6 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import path from 'path';
+
 import { AuthRequest } from '../types/custom';
 import { HttpError } from '../models/http-error';
 import { Report } from '../models/report.schema';
@@ -45,6 +47,23 @@ export const getReportsById = async (
       new HttpError('Failed to fetch reports: ' + error.message, 500)
     );
   }
+};
+
+export const getReportByIdPdf = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { reportId } = req.params;
+  console.log(reportId);
+  const filePath = path.join(__dirname, `files/reports/${reportId}.pdf`);
+
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error(err);
+      return next(new HttpError('File not found.', 404));
+    }
+  });
 };
 
 export const createReport = async (

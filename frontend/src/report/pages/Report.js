@@ -28,29 +28,6 @@ const Report = () => {
     fetchReport();
   }, [sendRequest, token]);
 
-  const handlePdfUpload = async (reportId) => {
-    const userData = JSON.parse(localStorage.getItem('userData'));
-    try {
-      const response = await sendRequest(
-        `http://localhost:5000/api/reports/${reportId}/pdf`,
-        'GET',
-        null,
-        {
-          Authorization: `Bearer ${userData.token}`,
-          FileName: `${reportId}.pdf`,
-          ContentType: "application/pdf",
-        },
-      );
-
-      console.log(response)
-
-    } catch (err) {
-      console.log('Error fetching PDF:', err);
-    }
-  };
-
-
-
   const reportDeletedHandler = async (deletedInvetoryId) => {
     const userData = JSON.parse(localStorage.getItem('userData'));
     try {
@@ -81,7 +58,7 @@ const Report = () => {
         </div>
       )}
       {!isLoading && loadedReport && (
-        <ReportTable items={loadedReport} onReportDelete={reportDeletedHandler} handlePdfUpload={handlePdfUpload} />
+        <ReportTable items={loadedReport} onReportDelete={reportDeletedHandler} />
       )}
     </React.Fragment>
   );

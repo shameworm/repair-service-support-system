@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { format } from "date-fns"
 import {
   useReactTable,
@@ -9,10 +9,8 @@ import {
 } from '@tanstack/react-table';
 import Button from '../../shared/components/FormElements/Button';
 import Card from '../../shared/components/UIElements/Card';
-import { AuthContext } from '../../shared/context/auth-context';
 
 const ReportTable = (props) => {
-  const auth = useContext(AuthContext);
 
   const [sorting, setSorting] = useState([]);
   const [pageIndex, setPageIndex] = useState(0);
@@ -64,11 +62,9 @@ const ReportTable = (props) => {
         accessorKey: 'pdfReport',
         header: 'PDF Звіт',
         cell: (info) => {
-          const token = auth.token;
           return (
-
-            <a href={`http://localhost:5000/public/files/reports/report-${info.row.original._id}.pdf?token=${token}`}>Download Report</a>
-
+            <a target="_blank"
+              rel="noopener noreferrer" href={`http://localhost:5000/files/reports/report-${info.row.original._id}/pdf`}>Переглянути</a>
           );
         },
       },
