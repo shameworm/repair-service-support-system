@@ -1,9 +1,47 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AuthRequest } from '../types/custom';
 import { HttpError } from '../models/http-error';
 import { Inventory } from '../models/inventory.schema';
 import { Equipment } from '../models/equipment.schema';
 import { Technician } from '../models/technician.schema';
+
+export const getMostInventoryStats = async (req: Request, res: Response) => {
+  try {
+    const techniciansWithInventoryCount = await Inventory.aggregate([
+      {
+        $group: {
+          _id: '$technician',
+          inventoryCount: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { inventoryCount: -1 }
+      },
+      {
+        $limit: 5
+      },
+      {
+        $lookup: {
+          from: 'technicians',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'technician'
+        }
+      },
+      { $unwind: '$technician' },
+      {
+        $project: {
+          technicianName: '$technician.name',
+          inventoryCount: 1
+        }
+      }
+    ]);
+
+    res.json(techniciansWithInventoryCount);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching data' });
+  }
+};
 
 export const getInventories = async (
   req: AuthRequest,

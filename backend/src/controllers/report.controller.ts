@@ -8,6 +8,44 @@ import { Equipment } from '../models/equipment.schema';
 import { Technician } from '../models/technician.schema';
 import { generatePDF, deletePDF } from '../utils/reports.file.management';
 
+export const getMostReports = async (req: Request, res: Response) => {
+  try {
+    const techniciansWithReportCount = await Report.aggregate([
+      {
+        $group: {
+          _id: '$technician',
+          reportCount: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { reportCount: -1 }
+      },
+      {
+        $limit: 5
+      },
+      {
+        $lookup: {
+          from: 'technicians',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'technician'
+        }
+      },
+      { $unwind: '$technician' },
+      {
+        $project: {
+          technicianName: '$technician.name',
+          reportCount: 1
+        }
+      }
+    ]);
+
+    res.json(techniciansWithReportCount);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching data' });
+  }
+};
+
 export const getReports = async (
   req: AuthRequest,
   res: Response,

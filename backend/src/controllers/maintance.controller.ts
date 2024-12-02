@@ -1,9 +1,85 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AuthRequest } from '../types/custom';
 import { HttpError } from '../models/http-error';
 import { Maintenance } from '../models/maintance.schema';
 import { Equipment } from '../models/equipment.schema';
 import { Technician } from '../models/technician.schema';
+
+export const getMostMaintance = async (req: Request, res: Response) => {
+  try {
+    const mostMaintainedInventory = await Maintenance.aggregate([
+      {
+        $group: {
+          _id: '$equipment',
+          maintenanceCount: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { maintenanceCount: -1 }
+      },
+      {
+        $limit: 5 // Обмежити кількість найбільш технічного обслуговування інвентаря
+      },
+      {
+        $lookup: {
+          from: 'equipment',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'equipment'
+        }
+      },
+      { $unwind: '$equipment' },
+      {
+        $project: {
+          equipmentName: '$equipment.name',
+          maintenanceCount: 1
+        }
+      }
+    ]);
+
+    res.json(mostMaintainedInventory);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching data' });
+  }
+};
+
+export const getMostUsedInventory = async (req: Request, res: Response) => {
+  try {
+    const mostUsedInventory = await Maintenance.aggregate([
+      {
+        $group: {
+          _id: '$equipment',
+          maintenanceCount: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { maintenanceCount: -1 }
+      },
+      {
+        $limit: 5 // Обмежити кількість найбільш використовуваного інвентаря
+      },
+      {
+        $lookup: {
+          from: 'equipment',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'equipment'
+        }
+      },
+      { $unwind: '$equipment' },
+      {
+        $project: {
+          equipmentName: '$equipment.name',
+          maintenanceCount: 1
+        }
+      }
+    ]);
+
+    res.json(mostUsedInventory);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching data' });
+  }
+};
 
 export const getMaintenance = async (
   req: AuthRequest,
