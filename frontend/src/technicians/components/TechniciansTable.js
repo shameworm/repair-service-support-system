@@ -5,37 +5,42 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
 } from '@tanstack/react-table';
 import Button from '../../shared/components/FormElements/Button';
 import Card from '../../shared/components/UIElements/Card';
+import Filters from '../../shared/components/TableFilter/TableFilter';
 
 const TechniciansTable = (props) => {
   const [sorting, setSorting] = useState([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-
-
+  const [columnFilters, setColumnFilters] = useState([]);
 
   const columns = useMemo(
     () => [
       {
         accessorKey: 'name',
         header: "Ім'я",
+        enableColumnFilter: true,
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'specialization',
         header: 'Спеціалізація',
+        enableColumnFilter: true,
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'contactInfo',
         header: 'Контактна інформація',
+        enableColumnFilter: true,
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'isAdmin',
         header: 'Адміністратор',
+        enableColumnFilter: true,
         cell: (info) => {
           return info.getValue() ? 'Адміністратор' : 'Працівник';
         },
@@ -53,6 +58,7 @@ const TechniciansTable = (props) => {
     pageCount,
     state: {
       sorting,
+      columnFilters,
       pagination: {
         pageIndex,
         pageSize,
@@ -60,6 +66,7 @@ const TechniciansTable = (props) => {
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     onPaginationChange: (updater) => {
@@ -88,6 +95,18 @@ const TechniciansTable = (props) => {
 
   return (
     <div>
+      <span style={{ margin: '15px 50px', display: "flex" }}>
+        <Filters
+          columnFilters={columnFilters}
+          setColumnFilters={setColumnFilters}
+          filterOptions={[
+            { value: "name", label: "Ім'я" },
+            { value: "specialization", label: "Спеціалізація" },
+            { value: "contactInfo", label: "Контактна інформація" },
+            { value: "isAdmin", label: "Адміністратор" },
+          ]}
+        />
+      </span>
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (

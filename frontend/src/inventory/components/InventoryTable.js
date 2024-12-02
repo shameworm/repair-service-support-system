@@ -6,20 +6,24 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
 } from '@tanstack/react-table';
 import Button from '../../shared/components/FormElements/Button';
 import Card from '../../shared/components/UIElements/Card';
+import Filters from '../../shared/components/TableFilter/TableFilter';
 
 const InventoryTable = (props) => {
   const [sorting, setSorting] = useState([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [columnFilters, setColumnFilters] = useState([]);
 
   const columns = useMemo(
     () => [
       {
         accessorKey: 'date',
         header: 'Дата',
+        enableColumnFilter: true,
         cell: (info) => {
           const date = new Date(info.getValue());
           return format(date, 'dd.MM.yyyy');
@@ -28,12 +32,14 @@ const InventoryTable = (props) => {
       {
         accessorKey: 'remarks',
         header: 'Зауваження',
+        enableColumnFilter: true,
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'technician.name',
         id: 'technician.name',
         header: 'Технік',
+        enableColumnFilter: true,
         cell: (info) => {
           return info.row.original.technician.name || "Н/з"
         },
@@ -42,6 +48,7 @@ const InventoryTable = (props) => {
         accessorKey: 'equipment.name',
         id: 'equipment.name',
         header: 'Обладнання',
+        enableColumnFilter: true,
         cell: (info) => info.row.original.equipment?.name || "Н/з",
       },
       {
@@ -82,6 +89,7 @@ const InventoryTable = (props) => {
     pageCount,
     state: {
       sorting,
+      columnFilters,
       pagination: {
         pageIndex,
         pageSize,
@@ -89,6 +97,7 @@ const InventoryTable = (props) => {
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     onPaginationChange: (updater) => {
@@ -101,7 +110,6 @@ const InventoryTable = (props) => {
     },
   });
 
-  console.log(table.getRowModel().rows.map((row) => row))
   const handleSort = (header) => {
     header.column.toggleSorting();
   };
@@ -121,6 +129,16 @@ const InventoryTable = (props) => {
     <div>
       <span style={{ margin: '15px 50px' }}>
         <Button to="/inventory/new">+ Додати інвентар</Button>
+        <Filters
+          columnFilters={columnFilters}
+          setColumnFilters={setColumnFilters}
+          filterOptions={[
+            { value: "date", label: "Дата" },
+            { value: "remarks", label: "Зауваження" },
+            { value: "technician.name", label: "Технік" },
+            { value: "equipment.name", label: "Обладнання" },
+          ]}
+        />
       </span>
       <table>
         <thead>

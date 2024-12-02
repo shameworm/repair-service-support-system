@@ -5,35 +5,45 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
 } from '@tanstack/react-table';
 import Button from '../../shared/components/FormElements/Button';
 import Card from '../../shared/components/UIElements/Card';
+import Filters from '../../shared/components/TableFilter/TableFilter';
 
 const EquipmentTable = (props) => {
   const [sorting, setSorting] = useState([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [columnFilters, setColumnFilters] = useState([]);
 
   const columns = useMemo(
     () => [
       {
         accessorKey: 'name',
         header: 'Назва',
+        enableColumnFilter: true,
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'type',
         header: 'Тип',
+        enableColumnFilter: true,
+
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'status',
         header: 'Статус',
+        enableColumnFilter: true,
+
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'location',
         header: 'Адреса',
+        enableColumnFilter: true,
+
         cell: (info) => {
           console.log(info.row.original._id);
           return info.getValue();
@@ -78,6 +88,7 @@ const EquipmentTable = (props) => {
     pageCount,
     state: {
       sorting,
+      columnFilters,
       pagination: {
         pageIndex,
         pageSize,
@@ -85,6 +96,7 @@ const EquipmentTable = (props) => {
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     onPaginationChange: (updater) => {
@@ -114,8 +126,18 @@ const EquipmentTable = (props) => {
 
   return (
     <div>
-      <span style={{ margin: '15px 50px' }}>
+      <span style={{ margin: '15px 50px', display: "flex" }}>
         <Button to="/equipments/new">+ Додати обладнання</Button>
+        <Filters
+          columnFilters={columnFilters}
+          setColumnFilters={setColumnFilters}
+          filterOptions={[
+            { value: "name", label: "Назва" },
+            { value: "type", label: "Тип" },
+            { value: "status", label: "Статус" },
+            { value: "location", label: "Адреса" },
+          ]}
+        />
       </span>
       <table>
         <thead>

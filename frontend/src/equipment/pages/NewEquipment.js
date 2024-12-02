@@ -41,6 +41,7 @@ const NewEquipment = () => {
 
   const equipmentSubmitHandler = async event => {
     event.preventDefault();
+    console.log(formState.inputs)
     try {
       await sendRequest(
         'http://localhost:5000/api/equipments',
@@ -68,7 +69,7 @@ const NewEquipment = () => {
       <ErrorModal error={error} onClear={clearError} />
       <form className="equipment-form" onSubmit={equipmentSubmitHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
-        <Input
+        <Input id="name"
           element="input"
           type="text"
           label="Назва"
@@ -76,7 +77,7 @@ const NewEquipment = () => {
           errorText="Будь ласка, введіть коректну назву."
           onInput={inputHandler}
         />
-        <Input
+        <Input id="type"
           element="input"
           label="Тип"
           type="text"
@@ -84,7 +85,7 @@ const NewEquipment = () => {
           errorText="Будь ласка, введіть коректний тип"
           onInput={inputHandler}
         />
-        <Input
+        <Input id="status"
           element="input"
           label="Статус"
           type="text"
@@ -92,7 +93,7 @@ const NewEquipment = () => {
           errorText="Будь ласка, введіть коректний статус."
           onInput={inputHandler}
         />
-        <Input
+        <Input id="location"
           element="input"
           label="Адреса"
           type="text"
@@ -100,7 +101,7 @@ const NewEquipment = () => {
           onInput={inputHandler}
           errorText="Будь ласка, введіть коректний адрес."
         />
-        <Button type="submit" disabled={!formState.isValid}>
+        <Button type="submit">
           Додати обладнання
         </Button>
       </form>

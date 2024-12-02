@@ -6,21 +6,25 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
 } from '@tanstack/react-table';
 import Button from '../../shared/components/FormElements/Button';
 import Card from '../../shared/components/UIElements/Card';
+import Filters from '../../shared/components/TableFilter/TableFilter';
 
 const ReportTable = (props) => {
-
   const [sorting, setSorting] = useState([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [columnFilters, setColumnFilters] = useState([]);
+
 
   const columns = useMemo(
     () => [
       {
         accessorKey: 'date',
         header: 'Дата',
+        enableColumnFilter: true,
         cell: (info) => {
           const date = new Date(info.getValue());
           return format(date, 'dd.MM.yyyy');
@@ -29,17 +33,20 @@ const ReportTable = (props) => {
       {
         accessorKey: 'type',
         header: 'Тип',
+        enableColumnFilter: true,
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'details',
         header: 'Деталі',
+        enableColumnFilter: true,
         cell: (info) => info.getValue() || null,
       },
       {
         accessorKey: 'maintenance.type',
         id: 'maintenance.type',
         header: 'Тип обслуговування',
+        enableColumnFilter: true,
         cell: (info) => {
           return info.row.original.maintenance.type || "Н/з"
         },
@@ -48,6 +55,7 @@ const ReportTable = (props) => {
         accessorKey: 'technician.name',
         id: 'technician.name',
         header: 'Технік',
+        enableColumnFilter: true,
         cell: (info) => {
           return info.row.original.technician.name || "Н/з"
         },
@@ -55,6 +63,7 @@ const ReportTable = (props) => {
       {
         accessorKey: 'equipment.name',
         id: 'equipment.name',
+        enableColumnFilter: true,
         header: 'Обладнання',
         cell: (info) => info.row.original.equipment?.name || "Н/з",
       },
@@ -106,6 +115,7 @@ const ReportTable = (props) => {
     pageCount,
     state: {
       sorting,
+      columnFilters,
       pagination: {
         pageIndex,
         pageSize,
@@ -113,6 +123,7 @@ const ReportTable = (props) => {
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     onPaginationChange: (updater) => {
@@ -144,6 +155,18 @@ const ReportTable = (props) => {
     <div>
       <span style={{ margin: '15px 50px' }}>
         <Button to="/reports/new">+ Додати запис</Button>
+        <Filters
+          columnFilters={columnFilters}
+          setColumnFilters={setColumnFilters}
+          filterOptions={[
+            { value: "date", label: "Дата" },
+            { value: "type", label: "Тип" },
+            { value: "details", label: "Деталі" },
+            { value: "maintenance.type", label: "Тип обслуговування" },
+            { value: "technician.name", label: "Технік" },
+            { value: "equipment.name", label: "Обладнання" },
+          ]}
+        />
       </span>
       <table>
         <thead>
